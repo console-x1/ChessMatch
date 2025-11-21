@@ -6,31 +6,31 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 console.log('[INIT] - Start Public.js'.blue)
 
-async function userAuth(req) {
+function userAuth(req, res, next) {
+    req.user = {};
 
-    const token = req.cookies?.auth_token || req.cookie?.auth_token;
+    const token = req.cookies.auth_token;
 
-    if (token) {
-        jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
-            const user = req.user.id = decoded && decoded.id ? decoded.id : null;
-            return user;
+    if (!token) return next();
 
-        })
-    } else return null
+    jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+        if (!err && decoded) {
+            req.user.id = decoded.id || null;
+            req.user.email = decoded.email || null;
+        }
+        next();
+    });
 }
 
-router.get(["/index", "/", "/home", "/base", "/main"], async (req, res) => {
-    const user = await userAuth(req)
-    res.render('home', { user });
+router.get(["/index", "/", "/home", "/base", "/main"], userAuth, async (req, res) => {
+    res.render('home', { user: req.user ?? null, currentPage: 'home' });
 });
 
-router.get("/login", async (req, res) => {
-    const user = await userAuth(req)
-    res.render('login', { user })
+router.get("/login", userAuth, async (req, res) => {
+    res.render('login', { user: req.user ?? null, currentPage: 'login' })
 })
-router.get("/register", async (req, res) => {
-    const user = await userAuth(req)
-    res.render('register', { user })
+router.get("/register", userAuth, async (req, res) => {
+    res.render('register', { user: req.user ?? null, currentPage: 'register' })
 })
 
 module.exports = router;

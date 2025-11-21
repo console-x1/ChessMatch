@@ -10,7 +10,7 @@ router.use(express.json());
 console.log('[INIT] - Start Auth.js'.blue)
 
 async function login(user, res) {
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "6h" });
+    const token = jwt.sign({ id: user.userId, email: user.email }, process.env.SECRET_KEY, { expiresIn: "6h" });
 
     return res.cookie("auth_token", token, {
         httpOnly: true,
@@ -19,9 +19,28 @@ async function login(user, res) {
     });
 }
 
-async function getUser(email) {
+function getUserByEmailOrUsername(email, username) {
     return new Promise((resolve, reject) => {
-        db.get("SELECT * FROM users WHERE email = ? OR username = ?", [email, email], (err, user) => {
+        db.get(
+            "SELECT * FROM users WHERE email = ? OR username = ?",
+            [email, username],
+            (err, user) => {
+                if (err) reject(err);
+                else resolve(user);
+            }
+        );
+    });
+}
+
+async function getUser(email) {
+    const isEmail = email.includes('@');
+
+    const query = isEmail
+        ? "SELECT * FROM users WHERE email = ?"
+        : "SELECT * FROM users WHERE username = ?";
+
+    return new Promise((resolve, reject) => {
+        db.get(query, [email], (err, user) => {
             if (err) {
                 reject(err);
             } else {
@@ -42,13 +61,15 @@ router.post("/register", async (req, res) => {
         const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
         if (!regex.test(email)) return res.status(400).json({ error: 'Email invalide!' })
 
-        const existingUsername = await new Promise((resolve, reject) => { db.get(`SELECT userId FROM users WHERE username = ?`, [email], (err, userId) => { if (err) reject(err); else resolve(userId) }); });
-        const existingEmail = await new Promise((resolve, reject) => { db.get(`SELECT userId FROM users WHERE email = ?`, [email], (err, userId) => { if (err) reject(err); else resolve(userId) }); });
+        const conflit = await getUserByEmailOrUsername(email, username);
 
-        if (existingUsername || existingEmail) 
-            return res
-                .status(409)
-                .json({ error: "Cet email ou username est déjà associé à un autre compte." });
+        if (conflit) {
+            if (conflit.email === email)
+                return res.status(409).json({ error: "Email déjà utilisé." });
+
+            if (conflit.username === username)
+                return res.status(409).json({ error: "Nom d'utilisateur déjà pris." });
+        }
 
         // 🛡 Hash du mot de passe
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -56,7 +77,6 @@ router.post("/register", async (req, res) => {
         await db.run("INSERT INTO users (email, password, username) VALUES (?, ?, ?)", [email, hashedPassword, username]);
 
         const user = await getUser(email)
-        console.log(user)
 
         await login(user, res)
 

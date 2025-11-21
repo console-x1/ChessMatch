@@ -6,16 +6,18 @@ const cookieParser = require('cookie-parser')
 
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('Web/public'));
+app.use(express.json());
+app.use(cookieParser()); 
+app.set('trust proxy', true);
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'Web/views'));
 
 app.use('/api/auth', require('./Web/routes/Auth.js'));
 app.use('/dashboard', require('./Web/routes/Dashboard.js'))
 app.use('/', require('./Web/routes/Public.js'))
-
-app.use(express.static('Web/public'));
-app.use(express.json());
-app.use(cookieParser()); 
 
 
 // ====================================

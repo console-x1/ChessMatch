@@ -34,8 +34,6 @@ const verifyToken = (req, res, next) => {
                 });
             });
 
-            if (donneeLogin == null) return res.redirect(`${req.protocol}://${req.get('host')}/login`);
-
             req.user.username = donnee && donnee.username ? donnee.username : null;
             req.user.avatar = donnee && donnee.avatar ? donnee.avatar : null;
 
