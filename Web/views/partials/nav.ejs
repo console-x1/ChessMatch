@@ -1,0 +1,90 @@
+<!-- Navigation -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-[#0a0e27]/90 backdrop-blur-lg border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <a href="<%= user ? '/home' : '/login' %>" class="flex items-center space-x-3">
+                <i class="fas fa-chess-king text-3xl gradient-text"></i>
+                <span class="text-2xl font-bold gradient-text">ChessMatch</span>
+            </a>
+            
+            <% if (user) { %>
+                <!-- Desktop Navigation - Authenticated -->
+                <div class="hidden md:flex space-x-2">
+                    <a href="/home" class="nav-btn <%= currentPage === 'home' ? 'nav-active' : '' %> px-4 py-2 rounded-lg transition-all duration-300 hover:bg-blue-600/20">
+                        <i class="fas fa-home mr-2"></i>Accueil
+                    </a>
+                    <a href="/message" class="nav-btn <%= currentPage === 'message' ? 'nav-active' : '' %> px-4 py-2 rounded-lg transition-all duration-300 hover:bg-blue-600/20">
+                        <i class="fas fa-comments mr-2"></i>Message
+                    </a>
+                    <a href="/strategies" class="nav-btn <%= currentPage === 'strategies' ? 'nav-active' : '' %> px-4 py-2 rounded-lg transition-all duration-300 hover:bg-blue-600/20">
+                        <i class="fas fa-chess mr-2"></i>Stratégies
+                    </a>
+                    <a href="/analysis" class="nav-btn <%= currentPage === 'analysis' ? 'nav-active' : '' %> px-4 py-2 rounded-lg transition-all duration-300 hover:bg-blue-600/20">
+                        <i class="fas fa-chart-line mr-2"></i>Analyse
+                    </a>
+                    <a href="/profile" class="nav-btn <%= currentPage === 'profile' ? 'nav-active' : '' %> px-4 py-2 rounded-lg transition-all duration-300 hover:bg-blue-600/20">
+                        <i class="fas fa-user mr-2"></i>Profil
+                    </a>
+                    <a href="/logout" class="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 rounded-lg transition-all duration-300">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden px-3 py-2 rounded-lg hover:bg-blue-600/20">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            <% } else { %>
+                <!-- Desktop Navigation - Not Authenticated -->
+                <div class="hidden md:flex space-x-2">
+                    <a href="/login" class="px-4 py-2 rounded-lg transition-all duration-300 hover:bg-blue-600/20">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Connexion
+                    </a>
+                    <a href="/register" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-red-600 rounded-lg transition-all duration-300 hover:shadow-lg">
+                        <i class="fas fa-user-plus mr-2"></i>Inscription
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden px-3 py-2 rounded-lg hover:bg-blue-600/20">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            <% } %>
+        </div>
+        
+        <% if (user) { %>
+            <!-- Mobile Navigation - Authenticated -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-2">
+                <a href="/home" class="nav-btn-mobile <%= currentPage === 'home' ? 'nav-active' : '' %> block w-full text-left px-4 py-2 rounded-lg transition-all duration-300">
+                    <i class="fas fa-home mr-2"></i>Accueil
+                </a>
+                <a href="/message" class="nav-btn-mobile <%= currentPage === 'message' ? 'nav-active' : '' %> block w-full text-left px-4 py-2 rounded-lg transition-all duration-300">
+                    <i class="fas fa-comments mr-2"></i>Message
+                </a>
+                <a href="/strategies" class="nav-btn-mobile <%= currentPage === 'strategies' ? 'nav-active' : '' %> block w-full text-left px-4 py-2 rounded-lg transition-all duration-300">
+                    <i class="fas fa-chess mr-2"></i>Stratégies
+                </a>
+                <a href="/analysis" class="nav-btn-mobile <%= currentPage === 'analysis' ? 'nav-active' : '' %> block w-full text-left px-4 py-2 rounded-lg transition-all duration-300">
+                    <i class="fas fa-chart-line mr-2"></i>Analyse
+                </a>
+                <a href="/profile" class="nav-btn-mobile <%= currentPage === 'profile' ? 'nav-active' : '' %> block w-full text-left px-4 py-2 rounded-lg transition-all duration-300">
+                    <i class="fas fa-user mr-2"></i>Profil
+                </a>
+                <a href="/logout" class="block w-full text-left px-4 py-2 bg-red-600/20 hover:bg-red-600/30 rounded-lg transition-all duration-300">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                </a>
+            </div>
+        <% } else { %>
+            <!-- Mobile Navigation - Not Authenticated -->
+            <div id="mobileMenu" class="hidden md:hidden pb-4 space-y-2">
+                <a href="/login" class="block w-full text-left px-4 py-2 rounded-lg transition-all duration-300 hover:bg-blue-600/20">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Connexion
+                </a>
+                <a href="/register" class="block w-full text-left px-4 py-2 bg-gradient-to-r from-blue-600 to-red-600 rounded-lg transition-all duration-300">
+                    <i class="fas fa-user-plus mr-2"></i>Inscription
+                </a>
+            </div>
+        <% } %>
+    </div>
+</nav>

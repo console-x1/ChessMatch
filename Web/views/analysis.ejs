@@ -1,0 +1,94 @@
+<%- include('partials/header', { title: 'Analyse - ChessMatch' }) %>
+
+<main class="pt-16">
+    <section class="min-h-screen py-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 fade-in">
+                <h1 class="text-4xl font-bold mb-4">Analyse de partie</h1>
+                <p class="text-gray-400">Revoyez vos conversations et progressez</p>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="grid md:grid-cols-4 gap-6 mb-12">
+                <div class="stat-glow bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-6 fade-in">
+                    <i class="fas fa-trophy text-3xl text-yellow-400 mb-3"></i>
+                    <div class="text-3xl font-bold mb-1"><%= user.stats.successRate %>%</div>
+                    <div class="text-gray-400 text-sm">Taux de réussite</div>
+                </div>
+                <div class="stat-glow bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-6 fade-in">
+                    <i class="fas fa-star text-3xl text-blue-400 mb-3"></i>
+                    <div class="text-3xl font-bold mb-1"><%= Math.round(user.stats.brilliant * user.stats.totalGames / 100) %></div>
+                    <div class="text-gray-400 text-sm">Coups brillants</div>
+                </div>
+                <div class="stat-glow bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-6 fade-in">
+                    <i class="fas fa-skull-crossbones text-3xl text-red-400 mb-3"></i>
+                    <div class="text-3xl font-bold mb-1"><%= user.stats.totalBlunders %></div>
+                    <div class="text-gray-400 text-sm">Gaffes totales</div>
+                </div>
+                <div class="stat-glow bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-6 fade-in">
+                    <i class="fas fa-chess text-3xl text-green-400 mb-3"></i>
+                    <div class="text-3xl font-bold mb-1"><%= user.stats.totalGames %></div>
+                    <div class="text-gray-400 text-sm">Parties jouées</div>
+                </div>
+            </div>
+            
+            <!-- Conversation History -->
+            <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl border border-gray-700 p-8 fade-in">
+                <h2 class="text-2xl font-bold mb-6">Historique des conversations</h2>
+                
+                <% if (conversations && conversations.length > 0) { %>
+                    <% conversations.forEach((conv, index) => { %>
+                        <div class="<%= index < conversations.length - 1 ? 'mb-6 pb-6 border-b border-gray-700' : '' %>">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-comments text-2xl 
+                                        <%= conv.rating === 'brilliant' ? 'text-yellow-400' : '' %>
+                                        <%= conv.rating === 'best' ? 'text-green-400' : '' %>
+                                        <%= conv.rating === 'good' ? 'text-blue-400' : '' %>
+                                        <%= conv.rating === 'blunder' ? 'text-red-400' : '' %>
+                                    "></i>
+                                    <div>
+                                        <h3 class="font-semibold">Conversation avec <%= conv.name %></h3>
+                                        <p class="text-sm text-gray-400"><%= conv.date %></p>
+                                    </div>
+                                </div>
+                                <span class="badge-<%= conv.rating %> px-4 py-2 rounded-lg text-sm font-semibold">
+                                    <i class="fas 
+                                        <%= conv.rating === 'brilliant' ? 'fa-star' : '' %>
+                                        <%= conv.rating === 'best' ? 'fa-check-circle' : '' %>
+                                        <%= conv.rating === 'good' ? 'fa-thumbs-up' : '' %>
+                                        <%= conv.rating === 'blunder' ? 'fa-skull-crossbones' : '' %>
+                                        mr-1"></i>
+                                    <%= conv.rating === 'brilliant' ? 'Brillant' : '' %>
+                                    <%= conv.rating === 'best' ? 'Meilleur coup' : '' %>
+                                    <%= conv.rating === 'good' ? 'Bon coup' : '' %>
+                                    <%= conv.rating === 'blunder' ? 'Gaffe' : '' %>
+                                </span>
+                            </div>
+                            <div class="bg-gray-700/30 rounded-lg p-4 mb-3">
+                                <p class="text-gray-300 mb-2"><strong>Vous :</strong> "<%= conv.message %>"</p>
+                            </div>
+                            <div class="bg-<%= conv.rating === 'brilliant' || conv.rating === 'best' || conv.rating === 'good' ? 'blue' : 'red' %>-600/10 border-l-4 border-<%= conv.rating === 'brilliant' ? 'yellow' : conv.rating === 'best' ? 'green' : conv.rating === 'good' ? 'blue' : 'red' %>-500 p-4 rounded">
+                                <p class="text-sm">
+                                    <i class="fas <%= conv.rating === 'blunder' ? 'fa-exclamation-triangle text-red-400' : 'fa-lightbulb text-yellow-400' %> mr-2"></i>
+                                    <strong>Analyse :</strong> <%= conv.analysis %>
+                                </p>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="text-center py-12">
+                        <i class="fas fa-inbox text-6xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-400 text-lg">Aucune conversation analysée pour le moment</p>
+                        <p class="text-gray-500 text-sm mt-2">Commencez une partie pour voir vos analyses ici</p>
+                        <a href="/message" class="inline-block mt-6 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
+                            <i class="fas fa-comments mr-2"></i>Commencer une conversation
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('partials/footer') %>
