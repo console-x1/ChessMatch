@@ -33,6 +33,18 @@ db.serialize(() => {
     )`, (err) => {
         if (err) console.log('[DB] '.red, err.message);
     });
+
+    db.run(`
+    CREATE TABLE IF NOT EXISTS achievements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER NOT NULL,
+        code TEXT NOT NULL,
+        unlocked INTEGER DEFAULT 0,
+        unlockedAt DATETIME,
+
+        FOREIGN KEY(userId) REFERENCES users(userId)
+    )`);
+
 });
 
 module.exports = db;

@@ -12,17 +12,23 @@
             <div class="grid md:grid-cols-4 gap-6 mb-12">
                 <div class="stat-glow bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-6 fade-in">
                     <i class="fas fa-trophy text-3xl text-yellow-400 mb-3"></i>
-                    <div class="text-3xl font-bold mb-1"><%= user.stats.successRate %>%</div>
+                    <div class="text-3xl font-bold mb-1">
+                        <% if (user.stats.totalGames !== 0) { %>
+                            <%= (user.stats.successRate / user.stats.totalGames) * 100 %>%
+                        <% } else { %>
+                            0%
+                        <% } %>
+                        </div>
                     <div class="text-gray-400 text-sm">Taux de réussite</div>
                 </div>
                 <div class="stat-glow bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-6 fade-in">
                     <i class="fas fa-star text-3xl text-blue-400 mb-3"></i>
-                    <div class="text-3xl font-bold mb-1"><%= Math.round(user.stats.brilliant * user.stats.totalGames / 100) %></div>
+                    <div class="text-3xl font-bold mb-1"><%= user.stats.brilliant %></div>
                     <div class="text-gray-400 text-sm">Coups brillants</div>
                 </div>
                 <div class="stat-glow bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-6 fade-in">
                     <i class="fas fa-skull-crossbones text-3xl text-red-400 mb-3"></i>
-                    <div class="text-3xl font-bold mb-1"><%= user.stats.totalBlunders %></div>
+                    <div class="text-3xl font-bold mb-1"><%= user.stats.blunder %></div>
                     <div class="text-gray-400 text-sm">Gaffes totales</div>
                 </div>
                 <div class="stat-glow bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border border-gray-700 p-6 fade-in">

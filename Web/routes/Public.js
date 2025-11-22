@@ -11,13 +11,16 @@ function userAuth(req, res, next) {
 
     const token = req.cookies.auth_token;
 
-    if (!token) return next();
+    if (!token) {
+        req.user = null;    
+        return next();
+    }
 
     jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
         if (!err && decoded) {
             req.user.id = decoded.id || null;
             req.user.email = decoded.email || null;
-        }
+        } else req.user = null
         next();
     });
 }

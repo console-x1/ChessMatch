@@ -1,3 +1,4 @@
+const achievementsConfig = require('../config/achievements.config');
 const jwt = require('jsonwebtoken');
 const colors = require('colors')
 
@@ -34,8 +35,34 @@ const verifyToken = (req, res, next) => {
                 });
             });
 
+            const dbAchievements = await new Promise((resolve, reject) => {
+                db.all("SELECT code, unlocked FROM achievements WHERE userId = ?", [donnee.userId], (err, rows) => {
+                    if (err) return reject(err);
+                    resolve(rows || []);
+                });
+            });
+
             req.user.username = donnee && donnee.username ? donnee.username : null;
             req.user.avatar = donnee && donnee.avatar ? donnee.avatar : null;
+            req.user.stats = {
+
+                // Coup
+                brilliant: donnee.brilliant, best: donnee.best, good: donnee.good, inaccuracy: donnee.inaccuracy, mistake: donnee.mistake, blunder: donnee.blunder,
+
+                // Stats
+                successRate: donnee.successRate, totalGames: donnee.totalGames
+            }
+
+            req.user.achievements = achievementsConfig.map(a => {
+                const found = dbAchievements.find(d => d.code === a.code);
+
+                return {
+                    name: a.name,
+                    icon: a.icon,
+                    color: a.color,
+                    unlocked: found ? found.unlocked === 1 : false
+                };
+            });
 
 
             function long(str, len) {
